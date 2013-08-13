@@ -1,0 +1,42 @@
+
+options = {
+	:write_mod_time => false
+}
+
+# ------------------------------------------------
+# https://github.com/guard/guard-sass
+# ------------------------------------------------
+
+sass_options = {
+	:all_on_start => true,
+	:input 				=> 'sass',
+	:output 			=> 'compiled',
+	:style 				=> :compact, #:compact or #compressed
+	:load_paths 	=> ['sass/partials', 'sass/vendor']
+}
+
+# ------------------------------------------------
+# https://github.com/guard/guard-sprockets
+# ------------------------------------------------
+
+sprockets_options = {
+	:destination 		=> 'compiled',
+	:asset_paths 		=> ['scripts'],
+	:minify 				=> true,
+	:manifest_file 	=> 'scripts/application.js'
+}
+
+# @TODO: Add write_modtime_file to Guard
+
+def write_modtime_file
+	File.open('modtime', 'w') { |f| f.write(Time.now.to_i) }
+end
+
+guard 'sass', sass_options do
+	callback(:run_on_changes_end) { write_modtime_file if options[:write_mod_time] }
+end
+
+guard 'sprockets', sprockets_options do
+  watch(%r{^scripts/(.+\.js)$}) { |m| "compiled/application.js" }
+  callback(:run_on_changes_end) { write_modtime_file if options[:write_mod_time] }
+end
