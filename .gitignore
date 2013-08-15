@@ -1,0 +1,11 @@
+Thumbs.db
+.DS_Store
+.sass-cache
+._*
+*.log
+*.sublime*
+
+assets/modtime
+assets/Gemfile.lock
+
+!.gitkeep
